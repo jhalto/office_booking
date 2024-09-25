@@ -43,6 +43,7 @@ dependencies:
   provider:
   image_picker:
   http:
+  mailer:
 
 dev_dependencies:
   flutter_test:

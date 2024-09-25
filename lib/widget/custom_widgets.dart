@@ -33,15 +33,16 @@ var spinkit = SpinKitSpinningLines(
 class customTextFromField extends StatelessWidget {
   String hintText;
   TextEditingController controller;
+  FormFieldValidator? validator;
   customTextFromField({
-    super.key,required this.hintText,required this.controller
+    super.key,required this.hintText,required this.controller, this.validator
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-
+      validator: validator,
       decoration: InputDecoration(
 
         hintText: hintText,

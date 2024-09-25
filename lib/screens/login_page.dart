@@ -77,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     MaterialButton(
                       onPressed: () {
                         getLogin();
+
                       },
                       child: Text("Login"),
                     ),
@@ -104,17 +105,15 @@ class _LoginPageState extends State<LoginPage> {
 
   getLogin() async {
     try {
+      setState(() {
+        isloading = true;
+      });
       String url = "${baseUrlDrop}login";
 
       var _map = <String, dynamic>{};
       _map['login_by'] = loginBy; // Send the selected login option
       _map['email'] = emailController.text.toString();
       _map['password'] = passwordController.text.toString();
-
-      setState(() {
-        isloading = true;
-      });
-
       var response = await http.post(Uri.parse(url), body: _map);
       var data = jsonDecode(response.body);
       print("Request Payload: ${jsonEncode(_map)}");
@@ -131,6 +130,7 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       setState(() {
         isloading = false;
+
       });
       print("Error: $e");
     }
