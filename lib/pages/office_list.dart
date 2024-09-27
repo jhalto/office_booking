@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class office_list extends StatefulWidget {
-  const office_list({super.key});
+class OfficeList extends StatefulWidget {
+  const OfficeList({super.key});
 
   @override
-  State<office_list> createState() => _office_listState();
+  State<OfficeList> createState() => _OfficeListState();
 }
 
-class _office_listState extends State<office_list> {
+class _OfficeListState extends State<OfficeList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
