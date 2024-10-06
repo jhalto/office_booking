@@ -28,7 +28,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
               Container(
                 height: 220,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(100,),bottomRight: Radius.circular(100)),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.elliptical(300,130),bottomRight: Radius.elliptical(300,130)),
                   image: DecorationImage(
                     image: AssetImage('lib/asset/image/office_1.jpg'),
                     fit: BoxFit.cover,

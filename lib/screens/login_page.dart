@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
                   Container(
                     height: 220,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.elliptical(300,180),bottomRight: Radius.elliptical(300,180)),
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.elliptical(300,130),bottomRight: Radius.elliptical(300,130)),
                       image: DecorationImage(
                         image: AssetImage('lib/asset/image/office_1.jpg'),
                         fit: BoxFit.cover,
@@ -81,7 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 10,),
+                        Align(
+                            alignment: Alignment.center,
+                            child: Text("Welcome to Drops",style: myStyle(22,Colors.black,FontWeight.bold),)),
+                        SizedBox(height: 15),
                         Row(
                           children: [
                             Text('Verify with'),
@@ -128,8 +132,8 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               borderRadius: BorderRadius.circular(25),
                             ),
-                          hintText: _isEmailSelected==true?
-                              "Enter your email":"Enter your phone"
+                          hintText:
+                              "Enter your email"
 
                           ),
                           validator: (value) {
@@ -143,30 +147,28 @@ class _LoginPageState extends State<LoginPage> {
                               return "Invalid email";
                             }
                           },
-                        ):Center(
-                          child: IntlPhoneField(
-                            onChanged: (value) {
-                              var phone = value.completeNumber;
-                              print(phone);
-                            },
-                            initialCountryCode: 'BD',
-                            decoration: InputDecoration(
-                              hintText: "Enter Your Phone",
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                BorderSide(width: 3, color: Colors.black12),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              border: OutlineInputBorder(),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 3,
-                                  color: Colors.blueAccent,
-                                ),
-                                borderRadius: BorderRadius.circular(25),
-                              ),
+                        ):IntlPhoneField(
+                          onChanged: (value) {
+                            var phone = value.completeNumber;
+                            print(phone);
+                          },
+                          initialCountryCode: 'BD',
+                          decoration: InputDecoration(
+                            hintText: "Enter Your Phone",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                              BorderSide(width: 3, color: Colors.black12),
+                              borderRadius: BorderRadius.circular(25),
                             ),
-                          )
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 3,
+                                color: Colors.blueAccent,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
                         ),
                         SizedBox(height: 10),
                         Text("Password",style: myStyle(15,Colors.black,FontWeight.bold),),
@@ -232,9 +234,15 @@ class _LoginPageState extends State<LoginPage> {
                           alignment: Alignment.centerRight,
                           child: TextButton(onPressed: (){
                              Navigator.push(context, MaterialPageRoute(builder: (context) => PasswordResetScreen(),));
-                          }, child: Text("Forgot Password")),
+                          }, child: Text("Forgot Password",style: myStyle(15,Colors.black,FontWeight.bold),)),
                         ),
-                        MaterialButton(
+                        SizedBox(height: 10,),
+                        ElevatedButton(
+                          child: Text('Log In',style: myStyle(18,Colors.white),),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black,
+                            minimumSize: Size(double.infinity, 50),
+                          ),
                           onPressed: () {
                             if(_formKey.currentState!.validate()){
                               getLogin();
@@ -242,26 +250,30 @@ class _LoginPageState extends State<LoginPage> {
                             }
 
                           },
-                          child: Text("Login"),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => RegisterPage(),
-                                ));
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                                text: "Don't have an account?",
-                                style: myStyle(18, Colors.black),
-                                children: [
-                                  TextSpan(
-                                      text: "Sign up.",
-                                      style:
-                                          myStyle(20, Colors.red, FontWeight.bold)),
-                                ]),
+                        SizedBox(height: 15,),
+                        Align(
+                          alignment: Alignment.center,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => RegisterPage(),
+                                  ));
+                            },
+
+                            child: RichText(
+                              text: TextSpan(
+                                  text: "Don't have an account yet?",
+                                  style: myStyle(17, Colors.black38),
+                                  children: [
+                                    TextSpan(
+                                        text: " Sign up",
+                                        style:
+                                            myStyle(17, Colors.black, FontWeight.bold)),
+                                  ]),
+                            ),
                           ),
                         )
                       ],
@@ -308,7 +320,12 @@ class _LoginPageState extends State<LoginPage> {
   var isloading = false;
 
   verifyWith(){
-    _isEmailSelected == true? "email".toString():"phone".toString();
+    if(
+    _isEmailSelected == true){
+      return "email".toString();
+    }else{
+      return "phone".toString();
+    }
   }
   getLogin() async {
     try {
@@ -331,7 +348,7 @@ class _LoginPageState extends State<LoginPage> {
       print("Status Code: ${response.statusCode}");
       print("Response: $data");
       if (data['status']==true) {
-        showToastMessage("login Succesfull");
+        showToastMessage("login Successful");
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         String token = data['data']['token'];
         String email = data['data']['user']['email'];

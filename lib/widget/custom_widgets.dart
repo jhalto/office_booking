@@ -29,7 +29,25 @@ var spinkit = SpinKitSpinningLines(
        fontSize: 16.0
    );
  }
+class customButton extends StatelessWidget {
+   String? text;
+   VoidCallback? onPressed;
+   customButton({required this.text,required this.onPressed});
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return ElevatedButton(
+      child: Text('$text',style: myStyle(18,Colors.white),),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.black,
+        minimumSize: Size(double.infinity, 50),
+      ),
+      onPressed: onPressed,
 
+
+    );
+  }
+}
 class customTextFromField extends StatelessWidget {
   String hintText;
   TextEditingController controller;
@@ -58,7 +76,7 @@ class customTextFromField extends StatelessWidget {
               width: 3,
               color: Colors.black12
           ),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(25),
         ),
         border: OutlineInputBorder(
         ),
@@ -67,7 +85,7 @@ class customTextFromField extends StatelessWidget {
             width: 3,
             color: Colors.blueAccent,
           ),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(25),
         ),
       ),
     );
