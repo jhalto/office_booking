@@ -7,6 +7,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:office_booking/key/api_key.dart';
 import 'package:http/http.dart' as http;
 import 'package:office_booking/screens/verification_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widget/custom_widgets.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController _phoneContoller = TextEditingController();
   TextEditingController _passwordContoller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isObsecure = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,23 +76,67 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 5,
                 ),
                 customTextFromField(
-                    hintText: "Enter your phone", controller: _phoneContoller),
+                    inputType: TextInputType.number,
+                    hintText: "Enter your phone",
+                    controller: _phoneContoller),
                 SizedBox(
                   height: 5,
                 ),
-                customTextFromField(
-                  hintText: "Enter password",
+                TextFormField(
+                  decoration: InputDecoration(
+                      hintText: "Enter your password",
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 3, color: Colors.black12),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 3,
+                          color: Colors.blueAccent,
+                        ),
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isObsecure = !isObsecure;
+                            });
+                          },
+                          icon: isObsecure == true
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off))),
                   controller: _passwordContoller,
+                  obscureText: isObsecure,
                   validator: (value) {
-                    if (value!.isEmpty || value == null) {
-                      return "password can't be null";
+                    // Reset error message
+
+                    if (value == null || value.isEmpty) {
+                      return 'Password is required.';
                     }
+
+                    // Password length greater than 6
                     if (value.length < 6) {
-                      return "Invalid password";
+                      return '• Password must be longer than 6 characters.\n';
                     }
-                    if (!value.contains("")) {
-                      return "Invalid email";
+                    // Contains at least one uppercase letter
+                    if (!value.contains(RegExp(r'[A-Z]'))) {
+                      return '• Uppercase letter is missing.\n';
                     }
+                    // Contains at least one lowercase letter
+                    if (!value.contains(RegExp(r'[a-z]'))) {
+                      return '• Lowercase letter is missing.\n';
+                    }
+                    // Contains at least one digit
+                    if (!value.contains(RegExp(r'[0-9]'))) {
+                      return '• Digit is missing.\n';
+                    }
+                    // Contains at least one special character
+                    if (!value.contains(RegExp(r'[!@#%^&*(),.?":{}|<>]'))) {
+                      return '• Special character is missing.\n';
+                    }
+
+                    // Return null if the password is valid, otherwise return the error message
                   },
                 ),
                 SizedBox(
@@ -104,7 +150,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     }
                   },
                   child: Text("Submit"),
-                )
+                ),
+                TextButton(onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationPage(),));
+                }, child: Text("Verification page"))
               ],
             ),
           ),
@@ -120,6 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         isloading = true;
       });
+
       print("Email before sending: ${_emailContoller.text.toString()}");
       String url = "${baseUrlDrop}registration";
       var map = <String, dynamic>{};
@@ -138,16 +188,18 @@ class _RegisterPageState extends State<RegisterPage> {
         isloading = false;
       });
       if (response.statusCode == 200) {
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString('email', _emailContoller.text.toString());
         String otp = data['data']['otp']
             .toString(); // Assuming the OTP is returned in the response body
 
         // Call function to send the OTP via email
         await sendOtpEmail(_emailContoller.text, otp);
+        String email = _emailContoller.text.toString();
         Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => VerificationPage(
-                email: _emailContoller.text.toString(),
               ),
             )).then(
           (value) {
@@ -172,12 +224,12 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> sendOtpEmail(String recipientEmail, String otp) async {
     // Define your SMTP settings (use your credentials)
     String username = 'zobayerarmannadim@gmail.com'; // Sender's email
-    String password = 'insert your app password here'; // Sender's email password
+    String password = 'ztsx axap lofu tbwv'; // Sender's email password
 
     final smtpServer = gmail(username, password);
 
     final message = Message()
-      ..from = Address(username, 'Your App Name') // From email and name
+      ..from = Address(username, 'Office booking') // From email and name
       ..recipients.add(recipientEmail) // Recipient's email
       ..subject = 'Your OTP Code'
       ..text = 'Your OTP code is: $otp';

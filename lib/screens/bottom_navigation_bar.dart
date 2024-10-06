@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:office_booking/pages/office_list.dart';
 import 'package:office_booking/pages/office_show.dart';
+import 'package:office_booking/pages/office_view.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -11,7 +12,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> pages = [
-    OfficeShow(),
+    OfficeView(),
     OfficeList(),
   ];
   int currentIndex = 0;
