@@ -13,6 +13,14 @@ class UserProvider with ChangeNotifier{
   String? get phone => _phone;
   String? get photo => _photo;
 
+
+  // Add this method to update user data
+  void updateUserData({required String name, required String email, required String phone}) {
+    _name = name;  // Update the class variables
+    _email = email;
+    _phone = phone;
+    notifyListeners(); // Notify listeners to rebuild UI
+  }
   // Load user data from SharedPreferences
    Future<void> loadUserData() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
