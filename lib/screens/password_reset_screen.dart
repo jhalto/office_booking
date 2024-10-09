@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server/gmail.dart';
 import 'package:office_booking/screens/reset_password.dart';
@@ -93,12 +94,34 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                           style: TextStyle(fontSize: 16),
                         ),
                         SizedBox(height: 20),
-                        TextField(
+                        _isEmailSelected == true?TextField(
                           controller: _emailController,
                           decoration: InputDecoration(
                             hintText: 'Email ID',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ):IntlPhoneField(
+                          onChanged: (value) {
+                            var phone = value.completeNumber;
+                            print(phone);
+                          },
+                          initialCountryCode: 'BD',
+                          decoration: InputDecoration(
+                            hintText: "Enter Your Phone",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                              BorderSide(width: 3, color: Colors.black12),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 3,
+                                color: Colors.blueAccent,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
                             ),
                           ),
                         ),
@@ -115,14 +138,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
                           },
                         ),
                         SizedBox(height: 20),
-                        Center(
-                          child: TextButton(
-                            child: Text('Back to Login'),
-                            onPressed: () {
-                              // Handle back to login action
-                            },
-                          ),
-                        ),
+
                       ],
                     ),
                   ),
@@ -163,7 +179,7 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
   Future<void> sendOtpEmail(String recipientEmail, String otp) async {
     // Define your SMTP settings (use your credentials)
     String username = 'zobayerarmannadim@gmail.com'; // Sender's email
-    String password = ''; // Sender's email password
+    String password = appPassword; // Sender's email password
 
     final smtpServer = gmail(username, password);
 

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.jhalto.office_booking"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

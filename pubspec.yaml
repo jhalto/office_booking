@@ -46,6 +46,7 @@ dependencies:
   mailer:
   cached_network_image:
   intl_phone_field:
+  geolocator: ^13.0.1
 
 dev_dependencies:
   flutter_test:

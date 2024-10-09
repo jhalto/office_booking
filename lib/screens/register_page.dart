@@ -242,9 +242,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                           : Icon(Icons.visibility_off))),
                               controller: _confirmPasswordContoller,
                               obscureText: isObsecure2,
+                              onChanged: (value) {
+                                value = value;
+                              },
                               validator: (value) {
+
                                 // Reset error message
-                                  if(_passwordContoller != _confirmPasswordContoller){
+                                  if(_passwordContoller.text.toString() != _confirmPasswordContoller.text.toString()){
                                     return "Password doesn't match";
                                   }
                               }
@@ -254,7 +258,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
             
                         ],),
-                        SizedBox(height: 15,),
+                        SizedBox(height: 25,),
                         customButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
@@ -266,10 +270,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
 
 
-                        TextButton(onPressed: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationPage(),));
-                        }, child: Text("Verification page")),
-                        SizedBox(height: 250,)
+                        SizedBox(height: 300,)
                       ],
                     ),
                   ),
@@ -345,7 +346,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> sendOtpEmail(String recipientEmail, String otp) async {
     // Define your SMTP settings (use your credentials)
     String username = 'zobayerarmannadim@gmail.com'; // Sender's email
-    String password = ''; // Sender's email password
+    String password = appPassword; // Sender's email password
 
     final smtpServer = gmail(username, password);
 

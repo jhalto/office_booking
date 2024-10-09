@@ -296,6 +296,7 @@ class _LoginPageState extends State<LoginPage> {
     var password = sharedPreferences.getString('password');
     var email = sharedPreferences.getString('email');
 
+
     if (token != null && expiryTime != null && password != null && email != null) {
       // Check if the token has expired
       if (DateTime.now().millisecondsSinceEpoch < expiryTime) {
@@ -348,14 +349,23 @@ class _LoginPageState extends State<LoginPage> {
       print("Status Code: ${response.statusCode}");
       print("Response: $data");
       if (data['status']==true) {
+
         showToastMessage("login Successful");
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         String token = data['data']['token'];
         String email = data['data']['user']['email'];
+        String name = data['data']['user']['name'];
+        String phone = data['data']['user']['phone'];
+        String photo = data['data']['user']['photo'];
         int tokenExpiresIn = data['data']['token_expires_in']; // Convert to milliseconds
         sharedPreferences.setString('password', passwordController.text.toString());
+
         sharedPreferences.setString('token', token);
         sharedPreferences.setString('email', email);
+        sharedPreferences.setString('name', name);
+        sharedPreferences.setString('phone', phone);
+        sharedPreferences.setString('photo', photo);
+
         // Store token expiration time (30 days from now)
         int expiryTime = DateTime.now().add(Duration(seconds: tokenExpiresIn)).millisecondsSinceEpoch;
         await sharedPreferences.setInt('token_expiry', expiryTime);

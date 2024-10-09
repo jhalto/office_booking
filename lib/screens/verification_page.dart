@@ -26,42 +26,62 @@ class _VerificationPageState extends State<VerificationPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                DropdownButton<String>(
-                  value: otpBy,
-                  items: [
-                    DropdownMenuItem(
-                      value: 'email',
-                      child: Text('Login by Email'),
-                    ),
-                    DropdownMenuItem(
-                      value: 'phone',
-                      child: Text('Login by Phone'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    setState(() {
-                      otpBy = value!;
-                    });
-                  },
-                ),
-                Text("OTP",style: myStyle(45,Colors.black45),),
+        resizeToAvoidBottomInset: false,
+        body: Stack(
 
-                customTextFromField(hintText: "Enter your otp", controller: _otpController),
-                TextButton(onPressed: (){
-                       resendOtp();
-                }, child: Text("Resend Otp")),
-                MaterialButton(onPressed: (){
-                       verifyEmail();
-                },child: Text("submit"),),
-              ],
+          children: [
+            Container(
+              height: 220,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.elliptical(300,130),bottomRight: Radius.elliptical(300,130)),
+                image: DecorationImage(
+                  image: AssetImage('lib/asset/image/office_1.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+
+
+                children: [
+                  SizedBox(height: 185,),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 90,right: 90),
+                    child: Container(
+
+                      alignment: Alignment.center,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: Colors.white
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Verify OTP',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 50,),
+
+                  customTextFromField(hintText: "Enter your otp", controller: _otpController),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(onPressed: (){
+                           resendOtp();
+                    }, child: Text("Resend Otp",style: myStyle(16,Colors.black54,FontWeight.bold),)),
+                  ),
+                  SizedBox(height: 50,),
+                  customButton(text: "Submit", onPressed: () {
+                    verifyEmail();
+                  },)
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -124,7 +144,7 @@ class _VerificationPageState extends State<VerificationPage> {
   Future<void> sendOtpEmail(String recipientEmail, String otp) async {
     // Define your SMTP settings (use your credentials)
     String username = 'zobayerarmannadim@gmail.com'; // Sender's email
-    String password = 'ztsx axap lofu tbwv'; // Sender's email password
+    String password = appPassword; // Sender's email password
 
     final smtpServer = gmail(username, password);
 
