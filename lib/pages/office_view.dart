@@ -70,36 +70,7 @@ class _OfficeViewState extends State<OfficeView> {
     }
   }
 
-  logOut() async {
-    try {
-      SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
-      String url = "${baseUrlDrop}logout";
-      var map = <String, dynamic>{};
-      map['email'] = sharedPreferences.getString('email');
-      map['password'] = sharedPreferences.getString('password');
 
-      var response = await http.post(Uri.parse(url),
-          body: map, headers: await CustomHttpRequest.getHeaderWithToken());
-      var responseData = jsonDecode(response.body);
-
-      if (responseData['status'] == true) {
-        await sharedPreferences.remove('email');
-        await sharedPreferences.remove('password');
-        await sharedPreferences.remove('token');
-        await sharedPreferences.remove('token_expiry');
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-              (route) => false,
-        );
-      }
-    } catch (e) {
-      print("Something went wrong: $e");
-    }
-  }
 
   @override
   void initState() {
@@ -114,13 +85,7 @@ class _OfficeViewState extends State<OfficeView> {
         appBar: AppBar(
           title: Text("Office Details"),
           centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () async {
-                  await logOut();
-                },
-                icon: Icon(Icons.logout))
-          ],
+
         ),
         body: isLoading
             ? Center(child: CircularProgressIndicator())

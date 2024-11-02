@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:office_booking/custom_http/custom_http_request.dart';
 import 'package:office_booking/key/api_key.dart';
+import 'package:office_booking/model_class/office_model_2.dart';
 import 'package:office_booking/services/location_service.dart';
 import 'package:office_booking/widget/custom_widgets.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,6 +21,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getPosition();
+    getHome();
     super.initState();
   }
 
@@ -29,7 +35,7 @@ class _HomeState extends State<Home> {
       isLoading = true;
     });
     determinePosition().then(
-      (value) async {
+          (value) async {
         final LocationSettings locationSettings = LocationSettings(
           accuracy: LocationAccuracy.high,
           distanceFilter: 100,
@@ -46,31 +52,80 @@ class _HomeState extends State<Home> {
       },
     );
   }
-  getOffice()async{
-    try{
-      String url = "${baseUrlDrop}";
-    }catch(e){
 
+
+  List<NearestOffice> officeList = [];
+
+  getHome() async {
+    try {
+      String url = "${baseUrlDrop}home";
+      var map = <String, dynamic>{};
+      map['lat'] = "25.1972";
+      map['lon'] = '55.2797';
+      var response = await http.post(Uri.parse(url), body: map,
+          headers: await CustomHttpRequest.getHeaderWithToken());
+      var responseData = jsonDecode(response.body);
+      if (responseData['status'] == true) {
+        setState(() {
+          officeList = List<NearestOffice>.from(
+              responseData['data']['nearest offices'].map((office) =>
+                  NearestOffice.fromJson(office)));
+        });
+      }
+      print(response.statusCode);
+      print(responseData);
+    } catch (e) {
+      print("something went wrong");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
-      inAsyncCall: isLoading,
-      progressIndicator: spinkit,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Welcome Drops"),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: [
-            Text("Latitude is : $latitude"),
-            Text("Latitude is : $longitude"),
-            Text("accurracy is: $location"),
-          ],
-        ),
-      ),
+        inAsyncCall: isLoading,
+        progressIndicator: spinkit,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Welcome Drops")
+            ,
+            centerTitle
+                :
+            true
+            ,
+          )
+          ,
+          body
+              :
+          officeList
+              .
+          isNotEmpty
+              ?
+          SizedBox(
+
+            height: MediaQuery.of(context).size.height*.20,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: officeList.length,
+              itemBuilder: (context, index) {
+                var office = officeList[index];
+                 return Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: Container(
+                     width: 120,
+                      child: Column(
+                        children: [
+                          Text("${office.name}",style: myStyle(15),),
+                          Text("${office.location}"),
+                          Expanded(child: Text("${office.shortDescription}"))
+                        ],
+                      ),
+                    ),
+                 );
+              },
+            ),
+          ) :
+          Text("no data"),
+        )
     );
   }
 }

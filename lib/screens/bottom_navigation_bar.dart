@@ -15,29 +15,40 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> pages = [
     Home(),
+    OfficeView(),
+
     OfficeList(),
     UserAccount(),
   ];
   int currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         child: pages[currentIndex],
       ),
-   bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.black,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white60,
         currentIndex: currentIndex,
         onTap: (value) {
           setState(() {
             currentIndex = value;
           });
         },
-     items: [
-       BottomNavigationBarItem(icon: Icon(Icons.home_filled),label: "Office"),
-       BottomNavigationBarItem(icon: Icon(Icons.book_online),label: "Booking"),
-       BottomNavigationBarItem(icon: Icon(Icons.account_circle_rounded),label: "Account"),
-     ],
-        )
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.local_post_office_outlined), label: "Office"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.book_online), label: "Booking"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle_rounded), label: "Account"),
+        ],
+      ),
     );
   }
 }

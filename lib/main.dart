@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   runApp(const MyApp());
 }
 
@@ -18,21 +18,21 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => UserProvider(),),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
 
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            backgroundColor: Color(0xff000000),
-          )
+        useMaterial3: true,
+        appBarTheme: AppBarTheme(
+
         ),
-        darkTheme: ThemeData.dark(),
-        home: LoginPage(),
+       bottomNavigationBarTheme: BottomNavigationBarThemeData(
+         backgroundColor: Color(0xff000000),
+       )
       ),
+      darkTheme: ThemeData.dark(),
+      home: LoginPage(),
     );
   }
 }

@@ -1,15 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:office_booking/custom_http/custom_http_request.dart';
 import 'package:office_booking/key/api_key.dart';
 import 'package:office_booking/providers/user_provider.dart';
+import 'package:office_booking/screens/edit_profile.dart';
 import 'package:office_booking/widget/custom_widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart'as http;
+
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'login_page.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
@@ -21,183 +27,219 @@ class UserAccount extends StatefulWidget {
 class _UserAccountState extends State<UserAccount> {
   @override
   void initState() {
-    Provider.of<UserProvider>(context, listen: false).loadUserData();
     super.initState();
+    getUserData();
   }
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController  = TextEditingController();
-  TextEditingController _phoneController  = TextEditingController();
-  String phone = '';
+  String? phoneEdit;
+  String? name;
+  String? email;
+  String? phone;
+  String? photo;
+  String phoneSubstring = '';
 
+  getUserData() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    name = sharedPreferences.getString('name');
+    email = sharedPreferences.getString('email');
+    phone = sharedPreferences.getString('phone');
+    photo = sharedPreferences.getString('photo');
+    phoneEdit = phone!;
+    phoneSubstring = phoneEdit!.substring(4);
+    print(photo);
+    setState(() {});
+  }
+
+  logOut() async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String url = "${baseUrlDrop}logout";
+      var map = <String, dynamic>{};
+      map['email'] = sharedPreferences.getString('email');
+      map['password'] = sharedPreferences.getString('password');
+
+      var response = await http.post(Uri.parse(url),
+          body: map, headers: await CustomHttpRequest.getHeaderWithToken());
+      var responseData = jsonDecode(response.body);
+
+      if (responseData['status'] == true) {
+        await sharedPreferences.remove('email');
+        await sharedPreferences.remove('password');
+        await sharedPreferences.remove('token');
+        await sharedPreferences.remove('token_expiry');
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      print("Something went wrong: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<UserProvider>(context);
-    if (user.name != null && _nameController.text.isEmpty) {
-      _nameController.text = user.name!;
-    }
-    if (user.email != null && _emailController.text.isEmpty) {
-      _emailController.text = user.email!;
-    }
-
     return Scaffold(
-      
-        appBar: AppBar(
-          title: Text(
-            "Profile",
-            style: myStyle(25, Colors.white),
-          ),
-          centerTitle: true,
-        ),
-        body: user.photo != null
-            ? SingleChildScrollView(
-              child: Column(
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(70.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5), // Shadow color
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: Offset(0, 3), // Position the shadow below the AppBar
+                ),
+              ],
+            ),
+            child: AppBar(
+              backgroundColor: Colors.white,
+              toolbarHeight: 70,
+              elevation: 0,
+              // Set elevation to 0 to prevent AppBar shadow
+              title: Container(
+                width: 117,
+                child: Column(
                   children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                        radius: 30,
-                        backgroundImage: NetworkImage(
-                          "$imageUrlDrop${user.photo}",
-                        ),
-                      ),
-                      title: Text(user.name!),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(user.email!),
-                          Text(user.phone!),
-                        ],
+                    Text(
+                      "DROPS",
+                      style:
+                          TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text("by Cloud Spaces", style: small()),
+                    ),
+                  ],
+                ),
+              ),
+              leading: Icon(Icons.notifications_none),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 15),
+                  child: Icon(Icons.messenger_outline),
+                ),
+              ],
+              centerTitle: true,
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: phone != null
+              ? Column(
+                  children: [
+                    SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundImage: photo!.startsWith("/data")
+                            ? FileImage(File(photo!))
+                            : NetworkImage("${imageUrlDrop}${photo}"),
                       ),
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Hello"),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "${name}",
+                          style: bodyBold(),
+                        ),
+                        Text(
+                          "!",
+                          style: bodyBold(),
+                        ),
+                      ],
+                    ),
                     Container(
-                      padding: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(20),
                       child: Column(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-              
-                                isScrollControlled: true,
-                                context: context,
-                                builder: (context) => Container(
-                                         height: MediaQuery.of(context).size.height*.80,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      children: [
-                                        customTextField(
-                                          hintText: "Please give name",
-                                          controller: _nameController,
-                                        ),
-                                        SizedBox(height: 10,),
-                                        IntlPhoneField(
-                                          controller: _phoneController,
-                                          initialCountryCode: 'BD',
-                                          onChanged: (value) {
-                                           setState(() {
-                                             phone = value.completeNumber;
-                                           });
-                                          },
-
-                                        ),
-                                        SizedBox(height: 10,),
-                                        customTextFromField(
-                                            hintText: "Please insert email", controller: _emailController),
-                                        customButton(text: "upadate", onPressed: (){
-                                          changeUserData();
-                                        })
-                                      ],
+                            onTap: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditProfile(
+                                      name: name,
+                                      email: email,
+                                      phoneEdit: phoneEdit,
+                                      photo: photo,
                                     ),
-                                  ),
-                                ),
-                              );
+                                  ));
+                              if (result == true) {
+                                await getUserData();
+                              }
                             },
                             child: tapContainer("Edit Profile",
                                 Icon(CupertinoIcons.profile_circled)),
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
-                          tapContainer('Save Cards', Icon(Icons.add_card_sharp)),
+                          tapContainer('Preferred Drops',
+                              Icon(Icons.favorite_border_outlined)),
                           SizedBox(
-                            height: 10,
+                            height: 20,
                           ),
-                          tapContainer(
-                              'Favourites', Icon(CupertinoIcons.heart_fill)),
+                          tapContainer('Terms & Conditions',
+                              Icon(Icons.note_alt_outlined)),
                           SizedBox(
-                            height: 10,
+                            height: 50,
                           ),
-                          tapContainer('Save Cards', Icon(Icons.add_card_sharp)),
-                          SizedBox(
-                            height: 10,
+                          GestureDetector(
+                            onTap: () {
+                              logOut();
+                            },
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(width: 2, color: maya)),
+                              child: Center(
+                                child: Text(
+                                  "Logout",
+                                  style: TextStyle(color: maya),
+                                ),
+                              ),
+                            ),
                           ),
-                          tapContainer('Change Password', Icon(Icons.edit)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          tapContainer('Terms & Conditions', Icon(Icons.rule)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          tapContainer('Website', Icon(Icons.web)),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          tapContainer(
-                              'Delete Account', Icon(Icons.add_card_sharp)),
                         ],
                       ),
                     )
                   ],
-                ),
-            )
-            : spinkit);
-  }
-  changeUserData()async{
-    try{
-      String url = "${baseUrlDrop}profile";
-      var map = <String,dynamic>{};
-      map['name'] = _nameController.text.toString();
-      map['email'] = _emailController.text.toString();
-      map['phone'] = phone;
-
-      var response = await http.post(Uri.parse(url),headers: await CustomHttpRequest.getHeaderWithToken(),body: map);
-      var responseData = jsonDecode(response.body);
-      print(responseData);
-      if(responseData['status']== true){
-        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-        // Update SharedPreferences
-        sharedPreferences.setString('name', _nameController.text.toString());
-        sharedPreferences.setString('email', _emailController.text.toString());
-        sharedPreferences.setString('phone', phone);
-        Navigator.pop(context);
-        // Update UserProvider with the new data
-        Provider.of<UserProvider>(context, listen: false).updateUserData(
-          name: _nameController.text.toString(),
-          email: _emailController.text.toString(),
-          phone: phone,
-        );
-
-        print(sharedPreferences.getString('name'));
-      }
-
-      print(response.statusCode);
-
-    }catch(e){
-      print("went wrong $e");
-    }
+                )
+              : spinkit,
+        ));
   }
 }
 
 Container tapContainer(String text, Icon icon) {
   return Container(
-    decoration: BoxDecoration(
-        border: Border.all(width: 2), borderRadius: BorderRadius.circular(15)),
-    child: ListTile(
-      leading: icon,
-      title: Text(text),
-      trailing: Icon(CupertinoIcons.forward),
+    height: 60,
+    decoration:
+        BoxDecoration(color: maya, borderRadius: BorderRadius.circular(30)),
+    child: Center(
+      child: ListTile(
+        leading: icon,
+        title: Text(text),
+        trailing: Icon(CupertinoIcons.arrow_right_circle),
+      ),
     ),
   );
 }
