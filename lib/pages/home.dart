@@ -85,21 +85,53 @@ class _HomeState extends State<Home> {
         inAsyncCall: isLoading,
         progressIndicator: spinkit,
         child: Scaffold(
-          appBar: AppBar(
-            title: Text("Welcome Drops")
-            ,
-            centerTitle
-                :
-            true
-            ,
-          )
-          ,
-          body
-              :
-          officeList
-              .
-          isNotEmpty
-              ?
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(70.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5), // Shadow color
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: Offset(0, 3), // Position the shadow below the AppBar
+                  ),
+                ],
+              ),
+              child: AppBar(
+                backgroundColor: Colors.white,
+                toolbarHeight: 70,
+                elevation: 0,
+                // Set elevation to 0 to prevent AppBar shadow
+                title: Container(
+                  width: 117,
+                  child: Column(
+                    children: [
+                      Text(
+                        "DROPS",
+                        style:
+                        TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text("by Cloud Spaces", style: small()),
+                      ),
+                    ],
+                  ),
+                ),
+                leading: Icon(Icons.notifications_none),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: Icon(Icons.messenger_outline),
+                  ),
+                ],
+                centerTitle: true,
+              ),
+            ),
+          ),
+          body: officeList.isNotEmpty?
           SizedBox(
 
             height: MediaQuery.of(context).size.height*.20,

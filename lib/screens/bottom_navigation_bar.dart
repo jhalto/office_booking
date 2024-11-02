@@ -1,9 +1,13 @@
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:office_booking/pages/book_now.dart';
 import 'package:office_booking/pages/home.dart';
 import 'package:office_booking/pages/office_list.dart';
 
 import 'package:office_booking/pages/office_view.dart';
 import 'package:office_booking/screens/account.dart';
+
+import '../widget/custom_widgets.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -16,7 +20,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> pages = [
     Home(),
     OfficeView(),
-
+    BookNow(),
     OfficeList(),
     UserAccount(),
   ];
@@ -25,30 +29,26 @@ class _BottomNavBarState extends State<BottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: pages[currentIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.black,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white60,
-        currentIndex: currentIndex,
-        onTap: (value) {
+      body: pages[currentIndex],
+
+      bottomNavigationBar: ConvexAppBar(
+
+        initialActiveIndex: currentIndex,
+        style: TabStyle.fixedCircle,
+        backgroundColor: caya,
+        items: [
+          TabItem(icon: Icons.home, title: 'Home'),
+          TabItem(icon: Icons.map, title: 'Discovery'),
+          TabItem(icon: Icons.add, title: 'Add'),
+          TabItem(icon: Icons.message, title: 'Message'),
+          TabItem(icon: Icons.people, title: 'Profile'),
+        ],
+        onTap: (value){
           setState(() {
             currentIndex = value;
           });
         },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.local_post_office_outlined), label: "Office"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.book_online), label: "Booking"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle_rounded), label: "Account"),
-        ],
-      ),
+      )
     );
   }
 }
