@@ -39,9 +39,24 @@ class _BottomNavBarState extends State<BottomNavBar> {
         items: [
           TabItem(icon: Icons.home, title: 'Home'),
           TabItem(icon: Icons.map, title: 'Discovery'),
-          TabItem(icon: Icons.add, title: 'Add'),
+          TabItem(icon: CircleAvatar(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.add,color: Colors.white,),
+              ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  width: 3,
+                  color: Colors.white
+                )
+              ),
+            ),
+            backgroundColor: maya,
+          ), title: 'Add'),
           TabItem(icon: Icons.message, title: 'Message'),
-          TabItem(icon: Icons.people, title: 'Profile'),
+          TabItem(icon: Icons.people, title: 'Profile',),
         ],
         onTap: (value){
           setState(() {

@@ -43,6 +43,7 @@ dependencies:
   provider:
   image_picker:
   convex_bottom_bar: ^3.2.0
+  geocoding: ^3.0.0
   http:
   mailer:
   cached_network_image:
