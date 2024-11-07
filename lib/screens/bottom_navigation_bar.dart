@@ -5,6 +5,7 @@ import 'package:office_booking/pages/home.dart';
 import 'package:office_booking/pages/office_list.dart';
 
 import 'package:office_booking/pages/office_view.dart';
+import 'package:office_booking/pages/search.dart';
 import 'package:office_booking/screens/account.dart';
 
 import '../widget/custom_widgets.dart';
@@ -19,9 +20,9 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   List<Widget> pages = [
     Home(),
-    OfficeView(),
+    Search(),
     BookNow(),
-    OfficeList(),
+    OfficeView(),
     UserAccount(),
   ];
   int currentIndex = 0;
@@ -33,18 +34,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
       bottomNavigationBar: ConvexAppBar(
 
+
         initialActiveIndex: currentIndex,
-        style: TabStyle.fixedCircle,
+        style: TabStyle.fixed,
         backgroundColor: caya,
+
         items: [
           TabItem(icon: Icons.home, title: 'Home'),
           TabItem(icon: Icons.map, title: 'Discovery'),
-          TabItem(icon: CircleAvatar(
+          TabItem(
+              icon: CircleAvatar(
+
             child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(Icons.add,color: Colors.white,),
-              ),
+
+              child: Icon(Icons.add,color: Colors.white,),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -54,7 +57,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ),
             backgroundColor: maya,
-          ), title: 'Add'),
+          ), title: 'BOOK NOW',),
           TabItem(icon: Icons.message, title: 'Message'),
           TabItem(icon: Icons.people, title: 'Profile',),
         ],

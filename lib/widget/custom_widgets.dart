@@ -181,3 +181,9 @@ small(){
 }
 final Color maya = Color(0xff6DCEF5);
 final Color caya = Color(0xff28768E);
+
+whiteStyle(){
+  return TextStyle(
+    color: Colors.white
+  );
+}

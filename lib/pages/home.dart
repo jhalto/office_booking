@@ -1,7 +1,9 @@
-import 'dart:convert';
+ import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:office_booking/custom_http/custom_http_request.dart';
 import 'package:office_booking/key/api_key.dart';
@@ -9,6 +11,8 @@ import 'package:office_booking/model_class/office_model_2.dart';
 import 'package:office_booking/widget/custom_widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart'as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -21,8 +25,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getPosition();
-    getHome();
     getUserData();
+
+
     super.initState();
   }
 
@@ -65,7 +70,6 @@ class _HomeState extends State<Home> {
         return Future.error('Location permissions are denied');
       }
     }
-
     if (permission == LocationPermission.deniedForever) {
       return Future.error(
           'Location permissions are permanently denied, unable to request.');
@@ -80,10 +84,13 @@ class _HomeState extends State<Home> {
     try {
       await getPermission();
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
+          );
+        setState(() {
+          latitude = position.latitude.toString();
+          longitude = position.longitude.toString();
+          getHome();
+        });
 
-      latitude = position.latitude.toString();
-      longitude = position.longitude.toString();
 
       print("Position found: Lat - $latitude, Long - $longitude");
       await getLocation(position.latitude, position.longitude);
@@ -95,6 +102,9 @@ class _HomeState extends State<Home> {
       });
     }
   }
+  checkAvaibility(){
+
+  }
 
   getLocation(double latitude, double longitude) async {
     try {
@@ -103,7 +113,7 @@ class _HomeState extends State<Home> {
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         setState(() {
-          location = "${place.locality}, ${place.administrativeArea}, ${place.country}";
+          location = "${place.name} - ${place.isoCountryCode}";
         });
         print("Location found: $location");
       } else {
@@ -136,8 +146,9 @@ class _HomeState extends State<Home> {
     try {
       String url = "${baseUrlDrop}home";
       var map = <String, dynamic>{};
-      map['lat'] = latitude ?? "25.1972";
-      map['lon'] = longitude ?? '55.2797';
+      map['lat'] = latitude;
+      map['lon'] = longitude ;
+      print("${latitude}${longitude}");
 
       var response = await http.post(
           Uri.parse(url),
@@ -243,7 +254,7 @@ class _HomeState extends State<Home> {
                       children: [
                         Icon(Icons.location_on, size: 16),
                         SizedBox(width: 4),
-                        Text(location!, style: small()),
+                        Text("Current location: ${location}"),
                       ],
                     ),
                 ],
@@ -261,20 +272,34 @@ class _HomeState extends State<Home> {
                   final isSelected = selectedCapacity == option["value"];
 
                   return Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: FilterChip(
-                      selected: isSelected,
-                      label: Text(option["label"]),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          selectedCapacity = option["value"];
-                          print("Selected capacity: $selectedCapacity"); // Debug print
-                          filterOfficeList();
-                        });
-                      },
-                      backgroundColor: Colors.grey[200],
-                      selectedColor: Colors.blue[100],
-                      checkmarkColor: Colors.blue,
+
+                    padding: EdgeInsets.only(left: 30),
+                    child: Transform.scale(
+                      scale: 1.1,
+                      child: FilterChip(
+
+                        shape: RoundedRectangleBorder(
+
+                         side: BorderSide(
+                             width: 2,
+                             color: maya),
+                          borderRadius: BorderRadius.circular(30)
+                        ),
+                        selected: isSelected,
+                        label: Text(option["label"],style: TextStyle(color: isSelected == true?Colors.white:maya),),
+
+
+                        onSelected: (bool selected) {
+                          setState(() {
+                            selectedCapacity = option["value"];
+                            print("Selected capacity: $selectedCapacity"); // Debug print
+                            filterOfficeList();
+                          });
+                        },
+
+                        selectedColor: maya,
+                       showCheckmark: false,
+                      ),
                     ),
                   );
                 },
@@ -304,6 +329,22 @@ class _HomeState extends State<Home> {
                 itemBuilder: (context, index) {
                   var office = filteredOfficeList[index];
                   print("Photo URL: ${office.photos[0].url}");
+                  available()async{
+                    try{
+                      String urlA= "${baseUrlDrop}office-booked-schedule";
+                      DateTime now = DateTime.now();
+                      String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+                      var map = <String, dynamic>{};
+                      map['office_id']= office.id.toString();
+                      map['date']= formattedDate.toString();
+                      var response = await http.post(Uri.parse(urlA),headers: await CustomHttpRequest.getHeaderWithToken());
+                      var responseData = jsonDecode(response.body);
+                      print(responseData);
+
+                    }catch(e){
+
+                    }
+                  }
                   return Padding(
                     padding: const EdgeInsets.only(right: 20,top: 30,bottom: 60),
                     child: Container(
@@ -324,12 +365,91 @@ class _HomeState extends State<Home> {
                         ),
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage("${imageUrlDrop}${office.photos[0].url}",))
+                            image: CachedNetworkImageProvider("${imageUrlDrop}${office.photos[0].url}",))
                       ),
-                      child: Column(
-                        children: [
-                          Text("${office.name}")
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Spacer(),
+                            Row(
+
+                              children: [
+                                Text("${office.currency}",style: TextStyle(color: Colors.black,fontSize: 18),),
+                                Text("${(double.tryParse(office.pricePerHr!) ?? 0).toStringAsFixed(0)}",style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold,color: Colors.black),),
+                                SizedBox(width: 2,),
+                                Text("/hr",style: TextStyle(color: Colors.black,fontSize: 18),),
+
+
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Container(
+                              child: Row(
+
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: Icon(Icons.location_on_outlined,color: Colors.black,),
+                                  ),
+                                  
+                                  Expanded(child: Text("${office.location}",)),
+
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(7),
+
+                              child: Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      // _launchMapsUrl(office., )
+                                    },
+                                    child: Container(
+
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.white
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Text("${office.distance.toString().substring(0,5)}"),
+                                          SizedBox(width: 4),
+                                          Text("km"),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 15,),
+                                  Container(
+
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.white
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text("${office.capacity}"),
+                                        SizedBox(width: 4),
+                                        Text("Person"),
+                                      ],
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                            office.isActive.toString()=="1"?Text("Availabe Now"):Text("Closed"),
+                          ],
+                        ),
                       ),
                     ),
                   );
