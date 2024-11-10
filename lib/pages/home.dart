@@ -24,7 +24,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   void initState() {
-    getPosition();
+    gettingData();
 
 
     super.initState();
@@ -74,7 +74,12 @@ class _HomeState extends State<Home> {
           'Location permissions are permanently denied, unable to request.');
     }
   }
+  gettingData(){
+    getPosition();
+    getUserData();
+    getHome();
 
+  }
   getPosition() async {
     setState(() {
       isLoading = true;
@@ -87,8 +92,6 @@ class _HomeState extends State<Home> {
       setState(() {
           latitude = position.latitude.toString();
           longitude = position.longitude.toString();
-          getUserData();
-          getHome();
 
         });
 
