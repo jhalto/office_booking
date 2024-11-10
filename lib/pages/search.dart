@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:office_booking/custom_http/custom_http_request.dart';
+import 'package:office_booking/key/api_key.dart';
+import 'package:office_booking/model_class/office_list_model.dart';
 import '../widget/custom_widgets.dart';
+import 'package:http/http.dart'as http;
 class Search extends StatefulWidget {
   const Search({super.key});
 
@@ -11,9 +17,34 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
+
+  Map<String, dynamic>? officeInfo;
+  getOfficeList()async{
+    try{
+      String url = "${baseUrlDrop}office";
+      var response = await http.post(Uri.parse(url),headers: await CustomHttpRequest.getHeaderWithToken());
+      var responseData = jsonDecode(response.body);
+      print(responseData);
+      if(responseData['status']== true){
+
+        setState(() {
+          officeInfo = Map<String,dynamic>.from(responseData);
+          print(officeInfo);
+         });
+      }
+    }catch(e){
+
+    }
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    getOfficeList();
+
+  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return officeInfo!=null?Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0),
         child: Container(
@@ -66,7 +97,7 @@ class _SearchState extends State<Search> {
             Column(
               children: [
                 Container(
-                   padding: EdgeInsets.all(25),
+                   padding: EdgeInsets.all(20),
                     child: Row(
                   children: [
                     Expanded(child: Padding(
@@ -77,9 +108,9 @@ class _SearchState extends State<Search> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.location_on_outlined,color: Colors.white,),
-                          SizedBox(width: 10,),
+                          SizedBox(width: 5,),
                           Text("Location",style: TextStyle(color: Colors.white),),
-                          SizedBox(width: 10,),
+                          SizedBox(width: 5,),
                           Icon(Icons.arrow_circle_down,color: Colors.white,),
                         ],
                       ),
@@ -101,14 +132,14 @@ class _SearchState extends State<Search> {
                         onPressed: (){},child: Row(
                         children: [
                           Icon(FontAwesomeIcons.userPlus,color: Colors.white,),
-                          SizedBox(width: 12,),
+                          SizedBox(width: 8,),
                           Text("Capacity",style: TextStyle(color: Colors.white),),
-                          SizedBox(width: 5,),
-                          Icon(CupertinoIcons.minus,size: 12,color: Colors.white,),
-                          SizedBox(width: 5,),
+                          SizedBox(width: 2,),
+                          Icon(CupertinoIcons.minus,size: 10,color: Colors.white,),
+                          SizedBox(width: 2,),
                           Text("1",style: TextStyle(color: Colors.white),),
-                          SizedBox(width: 5,),
-                          Icon(CupertinoIcons.add,size: 12,color: Colors.white,)
+                          SizedBox(width: 2,),
+                          Icon(CupertinoIcons.add,size: 10,color: Colors.white,)
                         ],
                       ),),
                     ))
@@ -132,6 +163,7 @@ class _SearchState extends State<Search> {
                      ),
                     height: 200,
                     width: double.infinity,
+
                     child: Container(
 
                       width: 260,
@@ -167,8 +199,8 @@ class _SearchState extends State<Search> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("The Mall WTC"),
-                                        Text("Al Danah - Anu Dhabi"),
+                                        Text("${officeInfo!['data']['data'][0]['name']}",style: whiteStyle(),),
+                                        Text("Al Danah - Anu Dhabi",style: whiteStyle(),),
                                         SizedBox(height: 5,),
                                         Row(
                                           children: [
@@ -233,6 +265,6 @@ class _SearchState extends State<Search> {
             )
           ],
         ),
-    );
+    ):CircularProgressIndicator();
   }
 }

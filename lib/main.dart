@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:office_booking/providers/user_provider.dart';
 import 'package:office_booking/screens/login_page.dart';
 import 'dart:ui';
-
 import 'package:provider/provider.dart';
 
 void main() {

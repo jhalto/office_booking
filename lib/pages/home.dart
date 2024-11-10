@@ -25,7 +25,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     getPosition();
-    getUserData();
 
 
     super.initState();
@@ -83,17 +82,19 @@ class _HomeState extends State<Home> {
 
     try {
       await getPermission();
-      Position position = await Geolocator.getCurrentPosition(
-          );
-        setState(() {
+      Position position = await Geolocator.getCurrentPosition();
+      await getLocation(position.latitude, position.longitude);
+      setState(() {
           latitude = position.latitude.toString();
           longitude = position.longitude.toString();
+          getUserData();
           getHome();
+
         });
 
 
       print("Position found: Lat - $latitude, Long - $longitude");
-      await getLocation(position.latitude, position.longitude);
+
     } catch (e) {
       print("Location error: $e");
     } finally {
@@ -102,9 +103,7 @@ class _HomeState extends State<Home> {
       });
     }
   }
-  checkAvaibility(){
 
-  }
 
   getLocation(double latitude, double longitude) async {
     try {
@@ -143,11 +142,14 @@ class _HomeState extends State<Home> {
   }
 
   getHome() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       String url = "${baseUrlDrop}home";
       var map = <String, dynamic>{};
-      map['lat'] = latitude;
-      map['lon'] = longitude ;
+      map['lat'] = "25.197100";
+      map['lon'] = "55.279700";
       print("${latitude}${longitude}");
 
       var response = await http.post(
@@ -174,6 +176,9 @@ class _HomeState extends State<Home> {
 
           filterOfficeList();
           // Apply initial filter
+        });
+        setState(() {
+          isLoading = false;
         });
       }
     } catch (e) {

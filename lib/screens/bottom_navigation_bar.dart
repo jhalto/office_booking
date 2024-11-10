@@ -37,11 +37,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
         initialActiveIndex: currentIndex,
         style: TabStyle.fixed,
+
         backgroundColor: caya,
 
         items: [
           TabItem(icon: Icons.home, title: 'Home'),
-          TabItem(icon: Icons.map, title: 'Discovery'),
+          TabItem(icon: Icons.search, title: 'Search'),
           TabItem(
               icon: CircleAvatar(
 
@@ -57,10 +58,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ),
             backgroundColor: maya,
-          ), title: 'BOOK NOW',),
+          ), title: 'Book Now',
+
+          ),
           TabItem(icon: Icons.message, title: 'Message'),
           TabItem(icon: Icons.people, title: 'Profile',),
         ],
+
         onTap: (value){
           setState(() {
             currentIndex = value;
