@@ -42,7 +42,24 @@ class _CreateBookingState extends State<CreateBooking> {
         ],
         centerTitle: true,
       ),
-
+     body: SingleChildScrollView(
+       child: Column(
+         children: [
+           Container(
+             height: 400,
+             decoration: BoxDecoration(
+               borderRadius: BorderRadius.vertical(
+                 bottom: Radius.circular(40)
+               ),
+               image: DecorationImage(
+                   fit: BoxFit.fill,
+                   image: AssetImage("lib/asset/image/office_1.jpg")
+               )
+             ),
+           )
+         ],
+       ),
+     ),
     );
   }
 }
