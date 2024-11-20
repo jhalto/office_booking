@@ -77,15 +77,16 @@ class _HomeState extends State<Home> {
   gettingData(){
     getPosition();
     getUserData();
-    getHome();
+
 
   }
   getPosition() async {
-    setState(() {
-      isLoading = true;
-    });
 
     try {
+      setState(() {
+        isLoading = true;
+      });
+
       await getPermission();
       Position position = await Geolocator.getCurrentPosition();
       await getLocation(position.latitude, position.longitude);
@@ -95,15 +96,14 @@ class _HomeState extends State<Home> {
 
         });
 
+      getHome();
 
       print("Position found: Lat - $latitude, Long - $longitude");
-
-    } catch (e) {
-      print("Location error: $e");
-    } finally {
       setState(() {
         isLoading = false;
       });
+    } catch (e) {
+      print("Location error: $e");
     }
   }
 
@@ -125,34 +125,45 @@ class _HomeState extends State<Home> {
       print("Error retrieving address: $e");
     }
   }
-
-  void filterOfficeList() {
-    setState(() {
-      if (selectedCapacity == "All") {
-        filteredOfficeList = officeList;
-        print("Showing all offices: ${officeList.length}");
-      } else {
-        filteredOfficeList = officeList.where((office) {
-          // Convert office.capacity to int for comparison
-          int officeCapacity = int.tryParse(office.capacity.toString()) ?? 0;
-          print("Comparing office ${office.name}: office.capacity=$officeCapacity with filter=$selectedCapacity");
-          return officeCapacity == selectedCapacity;
-        }).toList();
-
-        print("Filtered offices for capacity $selectedCapacity: ${filteredOfficeList.length}");
-      }
-    });
-  }
-
-  getHome() async {
+  filtering(){
     setState(() {
       isLoading = true;
     });
+    if (selectedCapacity == "All") {
+      filteredOfficeList = officeList;
+      print("Showing all offices: ${officeList.length}");
+    } else {
+      filteredOfficeList = officeList.where((office) {
+        // Convert office.capacity to int for comparison
+        int officeCapacity = int.tryParse(office.capacity.toString()) ?? 0;
+        print("Comparing office ${office.name}: office.capacity=$officeCapacity with filter=$selectedCapacity");
+        return officeCapacity == selectedCapacity;
+      }).toList();
+
+      print("Filtered offices for capacity $selectedCapacity: ${filteredOfficeList.length}");
+
+    }
+    setState(() {
+      isLoading = false;
+    });
+
+  }
+  void filterOfficeList() {
+    setState(() {
+        filtering();
+        });
+  }
+
+  getHome() async {
+
     try {
+      setState(() {
+        isLoading = true;
+      });
       String url = "${baseUrlDrop}home";
       var map = <String, dynamic>{};
-      map['lat'] = "25.197100";
-      map['lon'] = "55.279700";
+      map['lat'] = latitude.toString();
+      map['lon'] = longitude.toString();
       print("${latitude}${longitude}");
 
       var response = await http.post(
@@ -178,6 +189,7 @@ class _HomeState extends State<Home> {
           }
 
           filterOfficeList();
+
           // Apply initial filter
         });
         setState(() {

@@ -213,7 +213,7 @@ class _SearchState extends State<Search> {
 
                       child: Container(
 
-                          width: 280,
+
                           child: ListView.builder(
                             shrinkWrap: true,
                             scrollDirection: Axis.horizontal,
