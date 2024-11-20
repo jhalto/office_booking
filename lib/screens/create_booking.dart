@@ -58,57 +58,122 @@ class _CreateBookingState extends State<CreateBooking> {
                    image: AssetImage("lib/asset/image/office_1.jpg")
                )
              ),
-             child: Container(
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: [
-                   Padding(
-                     padding: const EdgeInsets.only(top: 20,left: 20),
-                     child: Row(
-                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                       children: [
-                         Row(
-                           children: [
-                             Container(
-                               padding: EdgeInsetsDirectional.symmetric(horizontal: 5),
-                                 decoration: BoxDecoration(
-
-                                     borderRadius: BorderRadius.circular(20),
-                                   color: Colors.white
-                                 ),
-                                 child: Text("${double.parse(widget.office['distance'] ).toStringAsFixed(2)} km")
-                             ),
-                             SizedBox(width: 10,),
-                             Container(
-                                 padding: EdgeInsetsDirectional.symmetric(horizontal: 5),
-                                 decoration: BoxDecoration(
-
-                                     borderRadius: BorderRadius.circular(20),
-                                     color: Colors.white
-                                 ),
-                                 child: Text("${double.parse(widget.office['capacity'] ).toStringAsFixed(2)} person")
-                             ),
-                           ],
-                         ),
-                         Padding(
-                             padding: EdgeInsets.only(right: 30),
-                             child: Icon(CupertinoIcons.heart,color: Colors.white,)
-                         ),
-                       ],
-                     ),
-                   ),
-                   Spacer(),
-                   Padding(
-                       padding: EdgeInsets.only(left: 20,bottom: 20),
-                       child: Column(
+             child: Column(
+               crossAxisAlignment: CrossAxisAlignment.start,
+               children: [
+                 Padding(
+                   padding: const EdgeInsets.only(top: 20,left: 20),
+                   child: Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       Row(
                          children: [
-                           Text("${widget.office['location']}",style: myStyle(22,Colors.white,),),
-                           Text("${widget.office['']}")
+                           Container(
+                             padding: EdgeInsetsDirectional.symmetric(horizontal: 5),
+                               decoration: BoxDecoration(
+
+                                   borderRadius: BorderRadius.circular(20),
+                                 color: Colors.white
+                               ),
+                               child: Text("${double.parse(widget.office['distance'] ).toStringAsFixed(2)} km")
+                           ),
+                           SizedBox(width: 10,),
+                           Container(
+                               padding: EdgeInsetsDirectional.symmetric(horizontal: 5),
+                               decoration: BoxDecoration(
+
+                                   borderRadius: BorderRadius.circular(20),
+                                   color: Colors.white
+                               ),
+                               child: Text("${double.parse(widget.office['capacity'] ).toStringAsFixed(2)} person")
+                           ),
                          ],
                        ),
-                   )
-                 ],
-               ),
+                       Padding(
+                           padding: EdgeInsets.only(right: 30),
+                           child: Icon(CupertinoIcons.heart,color: Colors.white,)
+                       ),
+                     ],
+                   ),
+                 ),
+                 Spacer(),
+                 Padding(
+                     padding: EdgeInsets.only(left: 20,bottom: 20),
+                     child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text("${widget.office['name']}",style: myStyle(20,Colors.white,FontWeight.bold),),
+                         Text("${widget.office['location']} ${widget.office['city']}",style: whiteStyle(),),
+                         SizedBox(height: 20,),
+                         Row(
+                           children: [
+                            MaterialButton(
+
+                              onPressed: (){},
+                              height: 40,
+                              shape: RoundedRectangleBorder(
+
+
+                                borderRadius: BorderRadius.circular(30)
+                              ),
+                              color: maya,
+                              child: Text("Book Now",style: whiteStyle(),),
+
+                            ),
+                             SizedBox(width: 10,),
+                             MaterialButton(
+
+                               onPressed: (){},
+                               height: 30,
+                               shape: RoundedRectangleBorder(
+
+                                   side: BorderSide(
+                                     color: Colors.white
+                                   ),
+                                   borderRadius: BorderRadius.circular(30)
+                               ),
+                               color: Colors.transparent,
+                               child: Row(
+                                 children: [
+                                   Icon(CupertinoIcons.map,color: sada,),
+
+                                   Text("  Google Map",style: whiteStyle(),),
+                                 ],
+                               ),
+
+                             ),
+                             SizedBox(width: 10,),
+                             MaterialButton(
+
+                               onPressed: (){},
+                               height: 30,
+                               shape: RoundedRectangleBorder(
+
+                                   side: BorderSide(
+                                       color: Colors.white
+                                   ),
+                                   borderRadius: BorderRadius.circular(30)
+                               ),
+                               color: Colors.transparent,
+                               child: Row(
+                                 children: [
+                                   Icon(Icons.help_outline,color: sada,),
+
+                                   Text("  Help",style: whiteStyle(),),
+                                 ],
+                               ),
+                             ),
+                           ],
+                         )
+                       ],
+                     ),
+                 )
+               ],
+             ),
+           ),
+           Container(
+             padding: EdgeInsets.only(
+
              ),
            )
          ],
