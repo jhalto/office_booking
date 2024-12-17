@@ -227,7 +227,7 @@ class _SearchState extends State<Search> {
                                         top: 20, left: 20),
                                     child: Container(
                                       height: 110,
-                                      width: 280,
+                                      width: 290,
 
                                       decoration: BoxDecoration(
                                           color: caya,
@@ -282,24 +282,26 @@ class _SearchState extends State<Search> {
                                                       child: Text(
                                                           "${officeInfo!['data']['data'][index]['capacity']} PERSON"),
                                                     ),
-                                                    SizedBox(width: 10,),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 5,
-                                                          right: 5,
-                                                          top: 3,
-                                                          bottom: 3),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius: BorderRadius
-                                                              .circular(30),
-                                                          color: Colors.white
+                                                    SizedBox(width: 5,),
+                                                    SizedBox(
+                                                      child: Container(
+                                                        padding: EdgeInsets.only(
+                                                            left: 5,
+                                                            right: 5,
+                                                            top: 3,
+                                                            bottom: 3),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius
+                                                                .circular(30),
+                                                            color: Colors.white
+                                                        ),
+                                                        child: Text(
+                                                            "${double.parse(
+                                                                officeInfo!['data']['data'][index]['distance']
+                                                                    .toString())
+                                                                .toStringAsFixed(
+                                                                2)} km"),
                                                       ),
-                                                      child: Text(
-                                                          "${double.parse(
-                                                              officeInfo!['data']['data'][index]['distance']
-                                                                  .toString())
-                                                              .toStringAsFixed(
-                                                              2)} km"),
                                                     ),
                                                   ],
                                                 )
